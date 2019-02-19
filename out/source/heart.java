@@ -45,13 +45,15 @@ class AnimatedLine{
       drawLine();
     }
   }
-  public void drawLine(){
+  public void drawLine(){    
+    stroke(252, 45, 45);
+    strokeWeight(stroke/2); 
     line(x1, y1, x2, y2);
   }
 }
 
 class TimesTable{
-  private float step;
+  private float step,factor=1;
   private int count, radius, index = 0;
   private float currentStep = 0, timer=0;
   private PVector currentVector, prevVector;
@@ -67,24 +69,24 @@ class TimesTable{
     if(index<count){
       prevVector = PVector.fromAngle((TWO_PI*((currentStep/count)))+HALF_PI);
       prevVector.mult(radius); 
-      currentVector = PVector.fromAngle((TWO_PI/count)*((currentStep*2 % count))+HALF_PI);
+      currentVector = PVector.fromAngle((TWO_PI/count)*((currentStep*factor % count))+HALF_PI);
       currentVector.mult(radius);
       lines[index++] = new AnimatedLine(prevVector.x,prevVector.y,currentVector.x,currentVector.y,2);
     }
   }
 
   public void updateArt(){
-    if(currentStep == 0){
-      currentStep+=step;
-      setCurrentVectorAndLine();
-    }
-    else{
-      if(((timer++)%5)==0){
+    index = 0;
+    factor += 0.03f;
+    currentStep = 0;
+    textSize(20);    
+    fill(0, 102, 153);
+    text("Factor:" + factor, -470, -470); 
+    while(index<count){
         currentStep+=step;
         setCurrentVectorAndLine();
-      }
-      animate();
     }
+    animate();
   }
 
   private void animate(){
@@ -93,7 +95,7 @@ class TimesTable{
     noFill();
     circle(0,0,radius*2+3);
     for(int i = 0; i < index; i++){
-          lines[i].animateLine();
+          lines[i].drawLine();
     }
   }
 }
@@ -103,7 +105,7 @@ TimesTable t1;
 PVector vec1;
 public void setup(){
     
-  frameRate(120);
+  frameRate(240);
 }
 
 public void draw(){
@@ -111,7 +113,7 @@ public void draw(){
   translate(500,500); 
 
   if(t1==null){
-    t1 = new TimesTable(400,1,200);
+    t1 = new TimesTable(400,1,300);
   }
   else{
     t1.updateArt();
